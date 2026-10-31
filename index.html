@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MORLA CAFÉ | Customer Feedback</title>
+<style>
+:root{--navy:#20244f;--blue:#2f69bd;--pale:#eef3ff;--ink:#1d2440;--muted:#66708a;--line:#dce3f0;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#f6f8fc,#e9eef9);font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);padding:24px}
+.wrap{max-width:760px;margin:auto}.card{background:white;border:1px solid #e7ebf4;border-radius:24px;box-shadow:0 18px 55px #20244f12;overflow:hidden}
+.top{background:var(--navy);color:white;text-align:center;padding:28px 22px 25px}.mark{width:50px;height:58px;margin:0 auto 8px;border:2px solid white;border-radius:4px;position:relative;overflow:hidden}.mark:before{content:"";position:absolute;width:28px;height:70px;border-right:5px solid white;border-radius:50%;left:9px;top:-8px;transform:rotate(18deg)}.brand{font-family:Georgia,serif;letter-spacing:7px;font-size:30px;font-weight:600}.cafe{color:#9dbcf5;font-weight:800;letter-spacing:2px;font-size:13px}.top h1{font-size:24px;margin:18px 0 7px}.top p{margin:0;color:#d9e2ff;line-height:1.5}.form{padding:26px}.notice{background:#f1f5ff;border:1px solid #dce6ff;border-radius:12px;padding:12px 14px;color:#3d4b75;font-size:13px;margin-bottom:20px}
+label{display:block;font-size:14px;font-weight:700;margin:16px 0 7px}input,select,textarea{width:100%;border:1px solid #d4dbea;border-radius:11px;padding:13px 14px;font:inherit;color:var(--ink);background:#fff;outline:none}input:focus,select:focus,textarea:focus{border-color:#4b83e8;box-shadow:0 0 0 3px #4b83e81b}textarea{min-height:130px;resize:vertical}.hint{font-size:12px;color:var(--muted);margin-top:5px}.required{color:#d33}.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.btn{border:0;border-radius:12px;padding:14px 12px;font-weight:800;font-size:14px;cursor:pointer;text-align:center;text-decoration:none;display:block}.primary{background:var(--blue);color:white;width:100%;margin-top:18px}.wa{background:#159b5a;color:white}.email{background:#eaf1ff;color:#1d4fa7;border:1px solid #cddcff}.foot{text-align:center;color:#7c8499;font-size:12px;padding:0 20px 22px}
+@media(max-width:560px){body{padding:10px}.top{padding:24px 15px}.form{padding:20px}.actions{grid-template-columns:1fr}.top h1{font-size:21px}}
+</style></head>
+<body><main class="wrap"><section class="card">
+<header class="top"><div class="mark" aria-hidden="true"></div><div class="brand">MORLA</div><div class="cafe">CAFÉ</div><h1>Customer Feedback &amp; Complaint Form</h1><p>We value your feedback. Tell us about your experience so we can serve you better.</p></header>
+<form class="form" id="feedbackForm">
+<div class="notice">Fields marked <span class="required">*</span> are required. Your feedback will be prepared for submission through your selected contact channel.</div>
+<label for="name">Customer Name <span class="required">*</span></label><input id="name" name="name" required maxlength="100" placeholder="Enter your name" autofocus>
+<label for="phone">Phone Number (optional)</label><input id="phone" name="phone" type="tel" maxlength="30" placeholder="Enter your phone number">
+<label for="category">Complaint Category <span class="required">*</span></label><select id="category" name="category" required><option value="">Select a category</option><option>Customer Service</option><option>Food &amp; Drinks Quality</option><option>Staff Behaviour</option><option>Cleanliness &amp; Hygiene</option><option>Waiting Time</option><option>Prices &amp; Payments</option><option>Suggestions</option><option>Other</option></select>
+<label for="details">Complaint Details <span class="required">*</span></label><textarea id="details" name="details" required minlength="8" maxlength="3000" placeholder="Please describe your complaint or suggestion..."></textarea>
+<label for="visitDate">Date of Visit <span class="required">*</span></label><input id="visitDate" name="visitDate" type="date" required>
+<button class="btn primary" type="submit">Prepare Complaint</button>
+<div class="actions"><button class="btn wa" id="whatsappBtn" type="button">Send via WhatsApp</button><button class="btn email" id="emailBtn" type="button">Send via Email</button></div>
+<p class="hint">Choose WhatsApp or Email after completing the form. Your message will open in the selected app for you to review and send.</p>
+</form><div class="foot">MORLA CAFÉ · Great coffee, greater people</div></section></main>
+<script>
+const WHATSAPP = "252610362525";
+const EMAIL = "lastkellar@gmail.com";
+const form = document.getElementById("feedbackForm");
+const fields = ["name","phone","category","details","visitDate"];
+function getMessage(){
+ if(!form.reportValidity()) return null;
+ const v=Object.fromEntries(fields.map(k=>[k,document.getElementById(k).value.trim()]));
+ const item={...v, createdAt:new Date().toISOString(), status:"New"};
+ try{const old=JSON.parse(localStorage.getItem("morla_feedback")||"[]");old.unshift(item);localStorage.setItem("morla_feedback",JSON.stringify(old.slice(0,500)));}catch(e){}
+ return `MORLA CAFÉ — Customer Feedback\n\nName: ${v.name}\nPhone: ${v.phone||"Not provided"}\nCategory: ${v.category}\nDate of visit: ${v.visitDate}\n\nDetails:\n${v.details}`;
+}
+document.getElementById("whatsappBtn").addEventListener("click",()=>{const msg=getMessage();if(msg)window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank","noopener");});
+document.getElementById("emailBtn").addEventListener("click",()=>{const msg=getMessage();if(msg){const subject=encodeURIComponent("MORLA CAFÉ Customer Feedback");location.href="mailto:"+EMAIL+"?subject="+subject+"&body="+encodeURIComponent(msg);}});
+form.addEventListener("submit",e=>{e.preventDefault();const msg=getMessage();if(msg)alert("Your feedback has been prepared. Please choose WhatsApp or Email below to send it to MORLA CAFÉ.");});
+document.getElementById("visitDate").value=new Date().toISOString().slice(0,10);
+</script></body></html>
