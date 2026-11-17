@@ -1,43 +1,444 @@
 <!doctype html>
-<html lang="en">
+<html lang="so">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MORLA CAFÉ | Customer Feedback</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102b46">
+<title>MORLA CAFÉ | Foomka Ra'yi-celinta</title>
+
 <style>
-:root{--navy:#20244f;--blue:#2f69bd;--pale:#eef3ff;--ink:#1d2440;--muted:#66708a;--line:#dce3f0;--white:#fff}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#f6f8fc,#e9eef9);font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);padding:24px}
-.wrap{max-width:760px;margin:auto}.card{background:white;border:1px solid #e7ebf4;border-radius:24px;box-shadow:0 18px 55px #20244f12;overflow:hidden}
-.top{background:var(--navy);color:white;text-align:center;padding:28px 22px 25px}.mark{width:50px;height:58px;margin:0 auto 8px;border:2px solid white;border-radius:4px;position:relative;overflow:hidden}.mark:before{content:"";position:absolute;width:28px;height:70px;border-right:5px solid white;border-radius:50%;left:9px;top:-8px;transform:rotate(18deg)}.brand{font-family:Georgia,serif;letter-spacing:7px;font-size:30px;font-weight:600}.cafe{color:#9dbcf5;font-weight:800;letter-spacing:2px;font-size:13px}.top h1{font-size:24px;margin:18px 0 7px}.top p{margin:0;color:#d9e2ff;line-height:1.5}.form{padding:26px}.notice{background:#f1f5ff;border:1px solid #dce6ff;border-radius:12px;padding:12px 14px;color:#3d4b75;font-size:13px;margin-bottom:20px}
-label{display:block;font-size:14px;font-weight:700;margin:16px 0 7px}input,select,textarea{width:100%;border:1px solid #d4dbea;border-radius:11px;padding:13px 14px;font:inherit;color:var(--ink);background:#fff;outline:none}input:focus,select:focus,textarea:focus{border-color:#4b83e8;box-shadow:0 0 0 3px #4b83e81b}textarea{min-height:130px;resize:vertical}.hint{font-size:12px;color:var(--muted);margin-top:5px}.required{color:#d33}.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.btn{border:0;border-radius:12px;padding:14px 12px;font-weight:800;font-size:14px;cursor:pointer;text-align:center;text-decoration:none;display:block}.primary{background:var(--blue);color:white;width:100%;margin-top:18px}.wa{background:#159b5a;color:white}.email{background:#eaf1ff;color:#1d4fa7;border:1px solid #cddcff}.foot{text-align:center;color:#7c8499;font-size:12px;padding:0 20px 22px}
-@media(max-width:560px){body{padding:10px}.top{padding:24px 15px}.form{padding:20px}.actions{grid-template-columns:1fr}.top h1{font-size:21px}}
-</style></head>
-<body><main class="wrap"><section class="card">
-<header class="top"><div class="mark" aria-hidden="true"></div><div class="brand">MORLA</div><div class="cafe">CAFÉ</div><h1>Customer Feedback &amp; Complaint Form</h1><p>We value your feedback. Tell us about your experience so we can serve you better.</p></header>
-<form class="form" id="feedbackForm">
-<div class="notice">Fields marked <span class="required">*</span> are required. Your feedback will be prepared for submission through your selected contact channel.</div>
-<label for="name">Customer Name <span class="required">*</span></label><input id="name" name="name" required maxlength="100" placeholder="Enter your name" autofocus>
-<label for="phone">Phone Number (optional)</label><input id="phone" name="phone" type="tel" maxlength="30" placeholder="Enter your phone number">
-<label for="category">Complaint Category <span class="required">*</span></label><select id="category" name="category" required><option value="">Select a category</option><option>Customer Service</option><option>Food &amp; Drinks Quality</option><option>Staff Behaviour</option><option>Cleanliness &amp; Hygiene</option><option>Waiting Time</option><option>Prices &amp; Payments</option><option>Suggestions</option><option>Other</option></select>
-<label for="details">Complaint Details <span class="required">*</span></label><textarea id="details" name="details" required minlength="8" maxlength="3000" placeholder="Please describe your complaint or suggestion..."></textarea>
-<label for="visitDate">Date of Visit <span class="required">*</span></label><input id="visitDate" name="visitDate" type="date" required>
-<button class="btn primary" type="submit">Prepare Complaint</button>
-<div class="actions"><button class="btn wa" id="whatsappBtn" type="button">Send via WhatsApp</button><button class="btn email" id="emailBtn" type="button">Send via Email</button></div>
-<p class="hint">Choose WhatsApp or Email after completing the form. Your message will open in the selected app for you to review and send.</p>
-</form><div class="foot">MORLA CAFÉ · Great coffee, greater people</div></section></main>
-<script>
-const WHATSAPP = "252610362525";
-const EMAIL = "lastkellar@gmail.com";
-const form = document.getElementById("feedbackForm");
-const fields = ["name","phone","category","details","visitDate"];
-function getMessage(){
- if(!form.reportValidity()) return null;
- const v=Object.fromEntries(fields.map(k=>[k,document.getElementById(k).value.trim()]));
- const item={...v, createdAt:new Date().toISOString(), status:"New"};
- try{const old=JSON.parse(localStorage.getItem("morla_feedback")||"[]");old.unshift(item);localStorage.setItem("morla_feedback",JSON.stringify(old.slice(0,500)));}catch(e){}
- return `MORLA CAFÉ — Customer Feedback\n\nName: ${v.name}\nPhone: ${v.phone||"Not provided"}\nCategory: ${v.category}\nDate of visit: ${v.visitDate}\n\nDetails:\n${v.details}`;
+:root{
+  --navy:#102b46;
+  --navy2:#183d5e;
+  --blue:#2877b9;
+  --ink:#172b3d;
+  --muted:#647789;
+  --line:#dce6ed;
+  --green:#159b62;
 }
-document.getElementById("whatsappBtn").addEventListener("click",()=>{const msg=getMessage();if(msg)window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank","noopener");});
-document.getElementById("emailBtn").addEventListener("click",()=>{const msg=getMessage();if(msg){const subject=encodeURIComponent("MORLA CAFÉ Customer Feedback");location.href="mailto:"+EMAIL+"?subject="+subject+"&body="+encodeURIComponent(msg);}});
-form.addEventListener("submit",e=>{e.preventDefault();const msg=getMessage();if(msg)alert("Your feedback has been prepared. Please choose WhatsApp or Email below to send it to MORLA CAFÉ.");});
-document.getElementById("visitDate").value=new Date().toISOString().slice(0,10);
-</script></body></html>
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  padding:34px 18px;
+  background:radial-gradient(circle at 10% 8%,#dceef2 0,transparent 30%),linear-gradient(135deg,#f5f8fa,#eaf0f5);
+  font-family:Inter,"Segoe UI",Arial,sans-serif;
+  color:var(--ink);
+}
+
+.wrap{max-width:760px;margin:auto}
+
+.card{
+  background:#fff;
+  border:1px solid #e4ebf0;
+  border-radius:25px;
+  overflow:hidden;
+  box-shadow:0 24px 65px #102b4618;
+}
+
+.top{
+  position:relative;
+  overflow:hidden;
+  text-align:center;
+  padding:35px 24px 31px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+}
+
+.top:before,.top:after{
+  content:"";
+  position:absolute;
+  border:1px solid #ffffff20;
+  border-radius:50%;
+  width:240px;
+  height:240px;
+}
+
+.top:before{left:-135px;top:-150px}
+.top:after{right:-145px;bottom:-185px;width:300px;height:300px}
+
+.cup{
+  position:relative;
+  z-index:1;
+  width:54px;
+  height:54px;
+  margin:0 auto 12px;
+  border:1.5px solid #ffffffa8;
+  border-radius:17px;
+  display:grid;
+  place-items:center;
+  font-size:27px;
+  background:#ffffff10;
+}
+
+.brand{
+  position:relative;
+  z-index:1;
+  font-family:Georgia,serif;
+  font-size:31px;
+  font-weight:700;
+  letter-spacing:6px;
+}
+
+.cafe{
+  position:relative;
+  z-index:1;
+  margin-top:3px;
+  color:#f1c879;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:4px;
+}
+
+.top h1{
+  position:relative;
+  z-index:1;
+  font-size:24px;
+  margin:22px 0 8px;
+}
+
+.top p{
+  position:relative;
+  z-index:1;
+  max-width:510px;
+  margin:0 auto;
+  color:#dce9f3;
+  line-height:1.65;
+  font-size:14px;
+}
+
+.form{padding:28px 32px 30px}
+
+.notice{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  background:#f0f7fa;
+  border:1px solid #d9eaf0;
+  border-radius:13px;
+  padding:13px 15px;
+  color:#36566d;
+  font-size:13px;
+  line-height:1.55;
+  margin-bottom:22px;
+}
+
+label{
+  display:block;
+  font-size:14px;
+  font-weight:750;
+  margin:17px 0 8px;
+  color:#213b50;
+}
+
+input,select,textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px 15px;
+  font:inherit;
+  font-size:14px;
+  color:var(--ink);
+  background:#fbfdfe;
+  outline:none;
+  transition:.2s;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:#4a91c5;
+  box-shadow:0 0 0 4px #2877b91a;
+  background:#fff;
+}
+
+textarea{
+  min-height:135px;
+  resize:vertical;
+  line-height:1.6;
+}
+
+.hint{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.55;
+  margin:10px 2px 0;
+}
+
+.required{color:#d33}
+
+.primary{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:15px;
+  background:linear-gradient(135deg,var(--blue),#195b91);
+  color:white;
+  font-weight:800;
+  font-size:15px;
+  cursor:pointer;
+  margin-top:24px;
+  box-shadow:0 8px 18px #2877b92b;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:13px;
+}
+
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:14px 12px;
+  font-weight:800;
+  font-size:14px;
+  cursor:pointer;
+  text-align:center;
+  display:block;
+}
+
+.wa{background:var(--green);color:white}
+
+.email{
+  background:#eaf2fb;
+  color:#205889;
+  border:1px solid #d4e4f2;
+}
+
+.foot{
+  text-align:center;
+  color:#7b8b99;
+  font-size:12px;
+  padding:0 18px 23px;
+}
+
+@media(max-width:560px){
+  body{padding:12px}
+  .top{padding:29px 17px 25px}
+  .form{padding:21px 18px 24px}
+  .actions{grid-template-columns:1fr}
+  .top h1{font-size:21px}
+  .brand{font-size:28px}
+}
+</style>
+</head>
+
+<body>
+
+<main class="wrap">
+<section class="card">
+
+<header class="top">
+<div class="cup" aria-hidden="true">☕</div>
+<div class="brand">MORLA</div>
+<div class="cafe">CAFÉ</div>
+
+<h1>Foomka Cabashada iyo Ra'yi-celinta</h1>
+
+<p>
+Aragtidaadu qiimo weyn ayay noo leedahay.
+Noo sheeg sida aad u aragtay adeeggeenna
+si aan mar walba u wanaajino khibraddaada.
+</p>
+</header>
+
+<form class="form" id="feedbackForm">
+
+<div class="notice">
+<span>ℹ️</span>
+<span>
+Fadlan buuxi meelaha leh calaamadda
+<b class="required">*</b>.
+Marka aad dhamayso, dooro WhatsApp ama iimayl
+si aad noogu soo dirto farriintaada.
+</span>
+</div>
+
+<label for="name">
+Magaca Macmiilka <span class="required">*</span>
+</label>
+<input id="name" name="name" required maxlength="100"
+placeholder="Geli magacaaga" autofocus>
+
+<label for="phone">
+Lambarka Taleefanka (ikhtiyaari)
+</label>
+<input id="phone" name="phone" type="tel"
+maxlength="30" placeholder="Geli lambarkaaga taleefanka">
+
+<label for="category">
+Qaybta Cabashada <span class="required">*</span>
+</label>
+
+<select id="category" name="category" required>
+<option value="">Dooro qaybta ku habboon</option>
+<option>Adeegga Macaamiisha</option>
+<option>Tayada Cuntada iyo Cabitaanka</option>
+<option>Dhaqanka Shaqaalaha</option>
+<option>Nadaafadda iyo Fayadhowrka</option>
+<option>Waqtiga Sugitaanka</option>
+<option>Qiimaha iyo Lacag-bixinta</option>
+<option>Talo iyo Soo-jeedin</option>
+<option>Arrin Kale</option>
+</select>
+
+<label for="details">
+Faahfaahinta Cabashada ama Talo-bixinta
+<span class="required">*</span>
+</label>
+
+<textarea id="details" name="details" required
+minlength="8" maxlength="3000"
+placeholder="Halkan si faahfaahsan ugu sharax cabashadaada ama taladaada..."></textarea>
+
+<label for="visitDate">
+Taariikhda Booqashada <span class="required">*</span>
+</label>
+
+<input id="visitDate" name="visitDate" type="date" required>
+
+<button class="primary" type="submit">
+Diyaari Farriinta
+</button>
+
+<div class="actions">
+<button class="btn wa" id="whatsappBtn" type="button">
+Ku dir WhatsApp
+</button>
+
+<button class="btn email" id="emailBtn" type="button">
+Ku dir Iimayl
+</button>
+</div>
+
+<p class="hint">
+Marka hore buuxi foomka, dabadeed dooro habka aad rabto.
+Farriinta ayaa ka furmaysa app-ka aad dooratay
+si aad u hubiso una dirto.
+</p>
+
+</form>
+
+<div class="foot">
+MORLA CAFÉ · Bun wanaagsan, dad ka sii wanaagsan
+</div>
+
+</section>
+</main>
+
+<script>
+
+const WHATSAPP="252610362525";
+const EMAIL="lastkellar@gmail.com";
+
+const form=document.getElementById("feedbackForm");
+
+const fields=[
+"name",
+"phone",
+"category",
+"details",
+"visitDate"
+];
+
+function getMessage(){
+
+ if(!form.reportValidity())return null;
+
+ const v=Object.fromEntries(
+ fields.map(k=>[
+ k,
+ document.getElementById(k).value.trim()
+ ])
+ );
+
+ const item={
+ ...v,
+ createdAt:new Date().toISOString(),
+ status:"New"
+ };
+
+ try{
+ const old=JSON.parse(
+ localStorage.getItem("morla_feedback")||"[]"
+ );
+
+ old.unshift(item);
+
+ localStorage.setItem(
+ "morla_feedback",
+ JSON.stringify(old.slice(0,500))
+ );
+
+ }catch(e){}
+
+ return `MORLA CAFÉ — Cabasho iyo Ra'yi-celin
+
+Magaca: ${v.name}
+Taleefan: ${v.phone||"Lama bixin"}
+Qaybta: ${v.category}
+Taariikhda booqashada: ${v.visitDate}
+
+Faahfaahin:
+${v.details}`;
+}
+
+document.getElementById("whatsappBtn")
+.addEventListener("click",()=>{
+
+ const msg=getMessage();
+
+ if(msg){
+ window.open(
+ "https://wa.me/"+WHATSAPP+
+ "?text="+encodeURIComponent(msg),
+ "_blank",
+ "noopener"
+ );
+ }
+
+});
+
+document.getElementById("emailBtn")
+.addEventListener("click",()=>{
+
+ const msg=getMessage();
+
+ if(msg){
+
+ const subject=encodeURIComponent(
+ "MORLA CAFÉ — Cabasho iyo Ra'yi-celin"
+ );
+
+ location.href=
+ "mailto:"+EMAIL+
+ "?subject="+subject+
+ "&body="+encodeURIComponent(msg);
+
+ }
+
+});
+
+form.addEventListener("submit",e=>{
+
+ e.preventDefault();
+
+ const msg=getMessage();
+
+ if(msg){
+ alert(
+ "Farriintaada waa la diyaariyey. Fadlan dooro WhatsApp ama Iimayl si aad ugu dirto MORLA CAFÉ."
+ );
+ }
+
+});
+
+document.getElementById("visitDate").value=
+new Date().toISOString().slice(0,10);
+
+</script>
+
+</body>
+</html>
